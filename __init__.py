@@ -277,10 +277,27 @@ def add_scripts(dummy):
             bpy.data.texts[-1].name = script
             bpy.data.texts[script].write(file.read())
             file.close()
- 
+
+classes = (
+    Transmission,
+    CounterRule,
+    Rule,
+    MultiplayerPanel,
+    TransmissionList,
+    RuleList,
+    CounterRuleList,
+    Transmission_Add,
+    Transmission_Remove,
+    Rule_Add,
+    Rule_Remove,
+    CounterRule_Add,
+    CounterRule_Remove,
+)
+
 def register():
-    
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
     
     bpy.types.Object.Transmissions = bpy.props.CollectionProperty(type=Transmission)
     bpy.types.Object.Rules = bpy.props.CollectionProperty(type=Rule)
@@ -293,7 +310,9 @@ def register():
     bpy.app.handlers.load_post.append(add_scripts)
     
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
 
     bpy.app.handlers.game_post.remove(check_socket)
     bpy.app.handlers.game_pre.remove(Update_GameProperty)
