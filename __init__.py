@@ -134,7 +134,7 @@ class MultiplayerPanel(bpy.types.Panel):
                     OSbox.prop(obj, "Sender")
                     if obj.Sender == "SERVER":
                         OSbox.prop(obj, "Lifetime")
-                OSbox.operator("object.add_transmission", icon="ZOOMIN", text="Add Transmission")
+                OSbox.operator("object.transmission_add", icon="ZOOMIN", text="Add Transmission")
                 OSbox.template_list("TransmissionList", "", obj, "Transmissions", obj, "Transmissions_Active")
                 if len(obj.Transmissions) != 0:
                     item = obj.Transmissions[obj.Transmissions_Active]
@@ -146,7 +146,7 @@ class MultiplayerPanel(bpy.types.Panel):
                     if item.Type == "CUSTOM":
                         box.prop(item, "Custom")
             elif obj.Type == "Observer":
-                OSbox.operator("object.add_rule", icon="ZOOMIN", text="Add Rule")
+                OSbox.operator("object.rule_add", icon="ZOOMIN", text="Add Rule")
                 OSbox.template_list("RuleList", "", obj, "Rules", obj, "Rules_Active")
                 if len(obj.Rules) != 0:
                     item = obj.Rules[obj.Rules_Active]
@@ -174,7 +174,7 @@ class TransmissionList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         layout.label(icon="DRIVER")
         layout.prop(item, "Type")
-        layout.operator("object.remove_transmission", icon="PANEL_CLOSE", text="").index = index
+        layout.operator("object.transmission_remove", icon="PANEL_CLOSE", text="").index = index
 
 class RuleList(bpy.types.UIList):
 
@@ -185,7 +185,7 @@ class RuleList(bpy.types.UIList):
         layout.prop(item, "Mode")
         layout.prop(item, "Value")
         layout.operator("object.counter_rule_add", icon="ZOOMIN", text="Add Counter Rule").index = index
-        layout.operator("object.remove_rule", icon="PANEL_CLOSE", text="").index = index
+        layout.operator("object.rule_remove", icon="PANEL_CLOSE", text="").index = index
 
 class CounterRuleList(bpy.types.UIList):
 
@@ -196,8 +196,8 @@ class CounterRuleList(bpy.types.UIList):
         layout.prop(item, "Value")
         layout.operator("object.counter_rule_remove", icon="PANEL_CLOSE", text="").index = index
 
-class Transmission_Add(bpy.types.Operator):
-    bl_idname = "object.add_transmission"
+class OBJECT_OT_transmission_add(bpy.types.Operator):
+    bl_idname = "object.transmission_add"
     bl_description = bl_label = "Add Transmission"
 
     def execute(self, context):
@@ -205,8 +205,8 @@ class Transmission_Add(bpy.types.Operator):
         Update_GameProperty(self, context)
         return {'FINISHED'}
     
-class Transmission_Remove(bpy.types.Operator):
-    bl_idname = "object.remove_transmission"
+class OBJECT_OT_transmission_remove(bpy.types.Operator):
+    bl_idname = "object.transmission_remove"
     bl_description = bl_label = "Remove Transmission"
     index = bpy.props.IntProperty()
     
@@ -215,8 +215,8 @@ class Transmission_Remove(bpy.types.Operator):
         Update_GameProperty(self, context)
         return {'FINISHED'}
 
-class Rule_Add(bpy.types.Operator):
-    bl_idname = "object.add_rule"
+class OBJECT_OT_rule_remove(bpy.types.Operator):
+    bl_idname = "object.rule_add"
     bl_description = bl_label = "Add Rule"
     
     def execute(self, context):
@@ -224,8 +224,8 @@ class Rule_Add(bpy.types.Operator):
         Update_GameProperty(self, context)
         return {'FINISHED'}
     
-class Rule_Remove(bpy.types.Operator):
-    bl_idname = "object.remove_rule"
+class OBJECT_OT_rule_remove(bpy.types.Operator):
+    bl_idname = "object.rule_remove"
     bl_description = bl_label = "Remove Rule"
     index = bpy.props.IntProperty()
     
@@ -286,10 +286,10 @@ classes = (
     TransmissionList,
     RuleList,
     CounterRuleList,
-    Transmission_Add,
-    Transmission_Remove,
-    Rule_Add,
-    Rule_Remove,
+    OBJECT_OT_transmission_add,
+    OBJECT_OT_transmission_remove,
+    OBJECT_OT_rule_add,
+    OBJECT_OT_rule_remove,
     OBJECT_OT_counter_rule_add,
     OBJECT_OT_counter_rule_remove,
 )
