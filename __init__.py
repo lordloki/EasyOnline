@@ -184,7 +184,7 @@ class RuleList(bpy.types.UIList):
         layout.prop(item, "Property")
         layout.prop(item, "Mode")
         layout.prop(item, "Value")
-        layout.operator("object.add_counterrule", icon="ZOOMIN", text="Add Counter Rule").index = index
+        layout.operator("object.counter_rule_add", icon="ZOOMIN", text="Add Counter Rule").index = index
         layout.operator("object.remove_rule", icon="PANEL_CLOSE", text="").index = index
 
 class CounterRuleList(bpy.types.UIList):
@@ -194,7 +194,7 @@ class CounterRuleList(bpy.types.UIList):
         layout.prop(item, "Property")
         layout.prop(item, "Mode")
         layout.prop(item, "Value")
-        layout.operator("object.remove_counterrule", icon="PANEL_CLOSE", text="").index = index
+        layout.operator("object.counter_rule_remove", icon="PANEL_CLOSE", text="").index = index
 
 class Transmission_Add(bpy.types.Operator):
     bl_idname = "object.add_transmission"
@@ -234,19 +234,19 @@ class Rule_Remove(bpy.types.Operator):
         Update_GameProperty(self, context)
         return {'FINISHED'}
 
-class CounterRule_Add(bpy.types.Operator):
-    bl_idname = "object.add_counterrule"
-    bl_description = bl_label = "Add CounterRule"
+class OBJECT_OT_counter_rule_add(bpy.types.Operator):
+    bl_idname = "object.counter_rule_add"
+    bl_description = bl_label = "Add Counter Rule"
     index = bpy.props.IntProperty()
 
     def execute(self, context):
         context.object.Rules[self.index].Counter.add()
         Update_GameProperty(self, context)
         return {'FINISHED'}
-    
-class CounterRule_Remove(bpy.types.Operator):
-    bl_idname = "object.remove_counterrule"
-    bl_description = bl_label = "Remove CounterRule"
+
+class OBJECT_OT_counter_rule_remove(bpy.types.Operator):
+    bl_idname = "object.counter_rule_remove"
+    bl_description = bl_label = "Remove Counter Rule"
     index = bpy.props.IntProperty()
     
     def execute(self, context):
@@ -267,9 +267,9 @@ def check_socket(dummy):
                 client.socket.close()
 @persistent
 def add_scripts(dummy):
-    if add_scripts in bpy.app.handlers.scene_update_post:
-        bpy.app.handlers.scene_update_post.remove(add_scripts)
-    for script in ["client.py", "server.py", "info.txt"]:
+    if add_scripts in bpy.app.handlers.depsgraph_update_post:
+        bpy.app.handlers.depsgraph_update_post.remove(add_scripts)
+    for script in ["client.py", "server.py", "Readme.md"]:
         if script not in bpy.data.texts:
             path = os.path.dirname(os.path.abspath(__file__))+"\\"+script
             file = open(path)
@@ -290,8 +290,8 @@ classes = (
     Transmission_Remove,
     Rule_Add,
     Rule_Remove,
-    CounterRule_Add,
-    CounterRule_Remove,
+    OBJECT_OT_counter_rule_add,
+    OBJECT_OT_counter_rule_remove,
 )
 
 def register():
@@ -306,7 +306,7 @@ def register():
     
     bpy.app.handlers.game_post.append(check_socket)
     bpy.app.handlers.game_pre.append(Update_GameProperty)
-    bpy.app.handlers.scene_update_post.append(add_scripts)
+    bpy.app.handlers.depsgraph_update_post.append(add_scripts)
     bpy.app.handlers.load_post.append(add_scripts)
     
 def unregister():

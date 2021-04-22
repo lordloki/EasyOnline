@@ -1,0 +1,14 @@
+# QtCreator
+CMakeLists.txt.user
+*.cflags
+*.config
+*.cxxflags
+*.files
+*.includes
+*.user
+*.creator
+*.creator.user
+
+# python
+*.pyc
+__pycache__
