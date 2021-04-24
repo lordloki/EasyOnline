@@ -1,8 +1,8 @@
 bl_info = {
     "name": "Easy Online",
     "description": "An addon which makes it possible to create multiplayer games.",
-    "author": "BleGaDev",
-    "version": (1, 0, 1),
+    "author": "BleGaDev, Jorge Bernal (lordloki)",
+    "version": (1, 1, 0),
     "blender": (2, 80, 0),
     "location": "LOGIC_EDITOR > UI > MULTIPLAYER",
     "category": "Game Engine",
@@ -50,12 +50,12 @@ def Update_GameProperty(self, context):
     bpy.context.scene.objects.active = activeobject        
 
 network_type = [
-    ("SERVER", "Server", "The Blend functions as Server", "SCRIPT", 1),
-    ("CLIENT", "Client", "The Blend functions as Client ", "GAME", 2),
+    ("SERVER", "Server", "The Blend functions as Server", "URL", 1),
+    ("CLIENT", "Client", "The Blend functions as Client ", "LOGIC", 2),
     ("NONE", "None", "The Blend has no network qualities", 3)]
 type_type = [
-    ("Transmitter", "Transmitter", "The object will be visualized (at the other clients and at the Server) by a Representative.", "LAMP_AREA", 1),
-    ("Observer", "Observer", "Makes it possible to set up Rules and Counter-Rules. The ‘Observer’ Type may only be applied to a Representative.", "VISIBLE_IPO_ON", 2),
+    ("Transmitter", "Transmitter", "The object will be visualized (at the other clients and at the Server) by a Representative.", "PARTICLES", 1),
+    ("Observer", "Observer", "Makes it possible to set up Rules and Counter-Rules. The ‘Observer’ Type may only be applied to a Representative.", "HIDE_OFF", 2),
     ("NONE", "None", "The Object will not be influence by the network and neither influence it", 3)]
 Sending_type = [
         ("CLIENT", "Client", "The Client sends the Transmissions", 1),
@@ -113,10 +113,11 @@ class Rule(bpy.types.PropertyGroup):
     Counter = bpy.props.CollectionProperty(type=CounterRule)
     Counter_Active = bpy.props.IntProperty()
     
-class MultiplayerPanel(bpy.types.Panel):
-    bl_label = "Multiplayer Addon"
+class LOGIC_PT_multiplayer_panel(bpy.types.Panel):
     bl_space_type = "LOGIC_EDITOR"
     bl_region_type = "UI"
+    bl_category = "Logic"
+    bl_label = "Multiplayer Addon"
 
     def draw(self, context):
 
@@ -129,13 +130,13 @@ class MultiplayerPanel(bpy.types.Panel):
             OSbox.label(text="Object Settings", icon="OBJECT_DATA")
             OSbox.prop(obj, "Type")
             if obj.Type == "Transmitter":
-                OSbox.prop(obj, "Representative",icon="MOD_MIRROR")
+                OSbox.prop(obj, "Representative",icon="ORIENTATION_GIMBAL")
                 if scn.Network_Type != "SERVER":
                     OSbox.prop(obj, "Sender")
                     if obj.Sender == "SERVER":
                         OSbox.prop(obj, "Lifetime")
-                OSbox.operator("object.transmission_add", icon="ZOOMIN", text="Add Transmission")
-                OSbox.template_list("TransmissionList", "", obj, "Transmissions", obj, "Transmissions_Active")
+                OSbox.operator("object.transmission_add", icon="PLUS", text="Add Transmission")
+                OSbox.template_list("TRANSMISSION_UL_transmission_list", "", obj, "Transmissions", obj, "Transmissions_Active")
                 if len(obj.Transmissions) != 0:
                     item = obj.Transmissions[obj.Transmissions_Active]
                     box = OSbox.box()
@@ -146,16 +147,16 @@ class MultiplayerPanel(bpy.types.Panel):
                     if item.Type == "CUSTOM":
                         box.prop(item, "Custom")
             elif obj.Type == "Observer":
-                OSbox.operator("object.rule_add", icon="ZOOMIN", text="Add Rule")
-                OSbox.template_list("RuleList", "", obj, "Rules", obj, "Rules_Active")
+                OSbox.operator("object.rule_add", icon="PLUS", text="Add Rule")
+                OSbox.template_list("RULE_UL_rule_list", "", obj, "Rules", obj, "Rules_Active")
                 if len(obj.Rules) != 0:
                     item = obj.Rules[obj.Rules_Active]
                     Cbox = OSbox.box()
                     Cbox.label("Counter Rules:")
-                    Cbox.template_list("CounterRuleList", "", item, "Counter", item, "Counter_Active")
+                    Cbox.template_list("COUNTER_RULE_UL_counter_rule_list", "", item, "Counter", item, "Counter_Active")
                 
         box = layout.box()
-        box.label(text="Network", icon="RADIO")
+        box.label(text="Network", icon="COMMUNITY")
         box.prop(scn, 'Network_Type')
         row = box.row(align=True)
         if scn.Network_Type != "NONE":
@@ -169,25 +170,25 @@ class MultiplayerPanel(bpy.types.Panel):
                 box.prop(scn, "Connection_Attempts")
             box.prop(scn, "Size_Buffer")
            
-class TransmissionList(bpy.types.UIList):
+class TRANSMISSION_UL_transmission_list(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         layout.label(icon="DRIVER")
         layout.prop(item, "Type")
         layout.operator("object.transmission_remove", icon="PANEL_CLOSE", text="").index = index
 
-class RuleList(bpy.types.UIList):
+class RULE_UL_rule_list(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        layout.label(icon="SCRIPTPLUGINS")
+        layout.label(icon="FILE_TEXT")
         layout.prop_search(item, "Sensor", context.object.game, "sensors")
         layout.prop(item, "Property")
         layout.prop(item, "Mode")
         layout.prop(item, "Value")
-        layout.operator("object.counter_rule_add", icon="ZOOMIN", text="Add Counter Rule").index = index
+        layout.operator("object.counter_rule_add", icon="PLUS", text="Add Counter Rule").index = index
         layout.operator("object.rule_remove", icon="PANEL_CLOSE", text="").index = index
 
-class CounterRuleList(bpy.types.UIList):
+class COUNTER_RULE_UL_counter_rule_list(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         layout.prop(item, "Sensor")
@@ -215,7 +216,7 @@ class OBJECT_OT_transmission_remove(bpy.types.Operator):
         Update_GameProperty(self, context)
         return {'FINISHED'}
 
-class OBJECT_OT_rule_remove(bpy.types.Operator):
+class OBJECT_OT_rule_add(bpy.types.Operator):
     bl_idname = "object.rule_add"
     bl_description = bl_label = "Add Rule"
     
@@ -282,10 +283,10 @@ classes = (
     Transmission,
     CounterRule,
     Rule,
-    MultiplayerPanel,
-    TransmissionList,
-    RuleList,
-    CounterRuleList,
+    LOGIC_PT_multiplayer_panel,
+    TRANSMISSION_UL_transmission_list,
+    RULE_UL_rule_list,
+    COUNTER_RULE_UL_counter_rule_list,
     OBJECT_OT_transmission_add,
     OBJECT_OT_transmission_remove,
     OBJECT_OT_rule_add,
