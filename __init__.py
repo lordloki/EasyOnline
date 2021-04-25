@@ -16,7 +16,7 @@ from bpy.app.handlers import persistent
 def Update_GameProperty(self, context):
 
     if bpy.types.Scene.Network_Type != "NONE":
-        obj = context.objects
+        obj = context.object
         scn = context.scene
             
         all_objects = [object for scene in bpy.data.scenes for object in scene.objects]
