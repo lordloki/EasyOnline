@@ -77,41 +77,41 @@ bpy.types.Scene.Socket = None
 
 class Transmission(bpy.types.PropertyGroup):
 
-    transmission_type = [
+    transmission_type = (
         ("worldPosition", "Position", "The global Position of the object", 1),
         ("worldOrientation", "Rotation", "The global Rotation of the object", 2),
         ("worldScale", "Scale", "The global Scale of the object", 3),
         ("color", "Colour", "The colour of the object", 4),
         ("linearVelocity", "Velocity", "The global Velocity of the object", 5),
-        ("CUSTOM", "Custom", "Customly choosen a KX_GameObject attribute or a normal property", 6)
-        ]
+        ("CUSTOM", "Custom", "Customly choosen a KX_GameObject attribute or a normal property", 6),
+        )
     
-    Type = bpy.props.EnumProperty(name="Transmission Type", items=transmission_type, default="worldPosition", update=Update_GameProperty)
+    Type: bpy.props.EnumProperty(items=transmission_type, name="Transmission Type", default="worldPosition", update=Update_GameProperty)
       
-    Decimals = bpy.props.IntProperty(name="Decimals", min=0, max=10, description="Sets the number of decimals of the Transmissions", update=Update_GameProperty)
-    Skip = bpy.props.IntProperty(name="Skip", min=-1, description="Amount of logic ticks that has to be passed, before sending the Transmission(-1 = will only be sent once)", update=Update_GameProperty)
-    ChangeRequired = bpy.props.BoolProperty(name="Change Required", description="Sets if the value of the attribute must change before it is sent", update=Update_GameProperty) 
-    Custom = bpy.props.StringProperty(name="Custom", update=Update_GameProperty)
+    Decimals: bpy.props.IntProperty(name="Decimals", min=0, max=10, description="Sets the number of decimals of the Transmissions", update=Update_GameProperty)
+    Skip: bpy.props.IntProperty(name="Skip", min=-1, description="Amount of logic ticks that has to be passed, before sending the Transmission(-1 = will only be sent once)", update=Update_GameProperty)
+    ChangeRequired: bpy.props.BoolProperty(name="Change Required", description="Sets if the value of the attribute must change before it is sent", update=Update_GameProperty)
+    Custom: bpy.props.StringProperty(name="Custom", update=Update_GameProperty)
 
 class CounterRule(bpy.types.PropertyGroup):
     mode_type = [
     ("ASSIGN", "Assign", "Assign the value", 1),
     ("ADD", "Add", "Add to the current value", 2)]
-    Sensor = bpy.props.StringProperty(name="Sensor", description="Triggers the Counter Rule, has to be connected to a controller, is a sensor of the Transmitter", update=Update_GameProperty)
-    Mode = bpy.props.EnumProperty(name="Mode", items=mode_type, default="ASSIGN", description="How to apply the value to the property", update=Update_GameProperty)
-    Property = bpy.props.StringProperty(name="Property", default="", description="The Property that will be changed on this object", update=Update_GameProperty)
-    Value = bpy.props.StringProperty(name="Value", default="", description="The value to operate with, properties would be associated with the Transmitter", update=Update_GameProperty)
+    Sensor: bpy.props.StringProperty(name="Sensor", description="Triggers the Counter Rule, has to be connected to a controller, is a sensor of the Transmitter", update=Update_GameProperty)
+    Mode: bpy.props.EnumProperty(name="Mode", items=mode_type, default="ASSIGN", description="How to apply the value to the property", update=Update_GameProperty)
+    Property: bpy.props.StringProperty(name="Property", default="", description="The Property that will be changed on this object", update=Update_GameProperty)
+    Value: bpy.props.StringProperty(name="Value", default="", description="The value to operate with, properties would be associated with the Transmitter", update=Update_GameProperty)
     
 class Rule(bpy.types.PropertyGroup):
     mode_type = [
     ("ASSIGN", "Assign", "Assign the value", 1),
     ("ADD", "Add", "Add to the current value", 2)]
-    Sensor = bpy.props.StringProperty(name="Sensor", description="Triggers the Rule, has to be connected to a controller", update=Update_GameProperty)
-    Mode = bpy.props.EnumProperty(name="Mode", items=mode_type, default="ASSIGN", description="How to apply the value to the property", update=Update_GameProperty)
-    Property = bpy.props.StringProperty(name="Property", default="", description="The Property that will be changed at the Transmitter", update=Update_GameProperty)
-    Value = bpy.props.StringProperty(name="Value", default="", description="The value to operate with, properties would be associated with this object", update=Update_GameProperty)
-    Counter = bpy.props.CollectionProperty(type=CounterRule)
-    Counter_Active = bpy.props.IntProperty()
+    Sensor: bpy.props.StringProperty(name="Sensor", description="Triggers the Rule, has to be connected to a controller", update=Update_GameProperty)
+    Mode: bpy.props.EnumProperty(name="Mode", items=mode_type, default="ASSIGN", description="How to apply the value to the property", update=Update_GameProperty)
+    Property: bpy.props.StringProperty(name="Property", default="", description="The Property that will be changed at the Transmitter", update=Update_GameProperty)
+    Value: bpy.props.StringProperty(name="Value", default="", description="The value to operate with, properties would be associated with this object", update=Update_GameProperty)
+    Counter: bpy.props.CollectionProperty(type=CounterRule)
+    Counter_Active: bpy.props.IntProperty()
     
 class LOGIC_PT_multiplayer_panel(bpy.types.Panel):
     bl_space_type = "LOGIC_EDITOR"
@@ -140,7 +140,7 @@ class LOGIC_PT_multiplayer_panel(bpy.types.Panel):
                 if len(obj.Transmissions) != 0:
                     item = obj.Transmissions[obj.Transmissions_Active]
                     box = OSbox.box()
-                    box.label("Transmission Options")
+                    box.label(text="Transmission Options")
                     box.prop(item, "Decimals")
                     box.prop(item, "Skip")
                     box.prop(item, "ChangeRequired")
@@ -152,7 +152,7 @@ class LOGIC_PT_multiplayer_panel(bpy.types.Panel):
                 if len(obj.Rules) != 0:
                     item = obj.Rules[obj.Rules_Active]
                     Cbox = OSbox.box()
-                    Cbox.label("Counter Rules:")
+                    Cbox.label(text="Counter Rules:")
                     Cbox.template_list("COUNTER_RULE_UL_counter_rule_list", "", item, "Counter", item, "Counter_Active")
                 
         box = layout.box()
@@ -209,7 +209,7 @@ class OBJECT_OT_transmission_add(bpy.types.Operator):
 class OBJECT_OT_transmission_remove(bpy.types.Operator):
     bl_idname = "object.transmission_remove"
     bl_description = bl_label = "Remove Transmission"
-    index = bpy.props.IntProperty()
+    index: bpy.props.IntProperty()
     
     def execute(self, context):
         context.object.Transmissions.remove(self.index)
@@ -228,7 +228,7 @@ class OBJECT_OT_rule_add(bpy.types.Operator):
 class OBJECT_OT_rule_remove(bpy.types.Operator):
     bl_idname = "object.rule_remove"
     bl_description = bl_label = "Remove Rule"
-    index = bpy.props.IntProperty()
+    index: bpy.props.IntProperty()
     
     def execute(self, context):
         context.object.Rules.remove(self.index)
@@ -238,7 +238,7 @@ class OBJECT_OT_rule_remove(bpy.types.Operator):
 class OBJECT_OT_counter_rule_add(bpy.types.Operator):
     bl_idname = "object.counter_rule_add"
     bl_description = bl_label = "Add Counter Rule"
-    index = bpy.props.IntProperty()
+    index: bpy.props.IntProperty()
 
     def execute(self, context):
         context.object.Rules[self.index].Counter.add()
@@ -248,7 +248,7 @@ class OBJECT_OT_counter_rule_add(bpy.types.Operator):
 class OBJECT_OT_counter_rule_remove(bpy.types.Operator):
     bl_idname = "object.counter_rule_remove"
     bl_description = bl_label = "Remove Counter Rule"
-    index = bpy.props.IntProperty()
+    index: bpy.props.IntProperty()
     
     def execute(self, context):
         item = context.object.Rules[context.object.Rules_Active]
