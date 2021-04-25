@@ -150,6 +150,7 @@ class LOGIC_PT_multiplayer_panel(bpy.types.Panel):
                 OSbox.operator("object.rule_add", icon="PLUS", text="Add Rule")
                 OSbox.template_list("RULE_UL_rule_list", "", obj, "Rules", obj, "Rules_Active")
                 if len(obj.Rules) != 0:
+                    obj.Rules_Active = obj.Rules_Active #Without this gives error
                     item = obj.Rules[obj.Rules_Active]
                     Cbox = OSbox.box()
                     Cbox.label(text="Counter Rules:")
