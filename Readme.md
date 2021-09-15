@@ -1,3 +1,7 @@
+Original Author: BleGaDev
+
+Me, lordloki, adapted this code for current UPBGE 0.3 only.
+
 """
 Some general aspects to consider:
 
