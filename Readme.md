@@ -1,4 +1,4 @@
-Original Author: BleGaDev
+Original Author: BleGaDev (https://www.youtube.com/channel/UCvu5-PR79qHyB1PxLXEDARQ)
 
 Me, lordloki, adapted this code for current UPBGE 0.3 only.
 
