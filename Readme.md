@@ -3,4 +3,6 @@
 #   by BleGaDev
 ########################################
 
-Tutorial for the addon: https://youtu.be/J1DehLv55EU
+Original Author: BleGaDev (Tutorial for the addon: https://youtu.be/J1DehLv55EU)
+
+Me, lordloki, adapted this code for current UPBGE 0.3 only.
