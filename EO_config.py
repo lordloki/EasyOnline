@@ -678,7 +678,7 @@ def getTransmitterData(kx, data):
         temp = [name, eval("CMD_TRANS_"+name+proto), 0, skip, change, None]
         if name == "GAME_PROPERTY":
             t = type(kx[propname])
-            isoverwrite = isoverwrite and t in [int, float]
+            isoverwrite = isoverwrite or t not in [int, float] # can't be add change if str or boolean
             temp += [t not in [int, float, str, bool], propname, False, server_contr, isoverwrite]
             if not isoverwrite:
                 kx["EO_LAST_"+propname] = 0.0
