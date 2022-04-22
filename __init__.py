@@ -73,7 +73,7 @@ def getOrderedName(name, names):
         i += 1
     return endname
 
-Addon_Scripts = ["EO_client.py", "EO_DATA.py", "EO_server.py", "EO_config.py", "EO_network.py", "EO_README", "EO_script_template.py", "EO_damage.py", "EO_file.py"]
+Addon_Scripts = ["EO_client.py", "EO_DATA.py", "EO_server.py", "EO_config.py", "EO_network.py", "EO_script_template.py", "EO_damage.py", "EO_file.py", "Readme.md"]
 @persistent
 def updateScripts(dummy):
     'checks if certain script are in the .blend, and adds them if they are not there. Also updates EO_DATA'
