@@ -84,7 +84,7 @@ def updateScripts(dummy):
     for script_name in Addon_Scripts:
         if script_name not in bpy.data.texts:
             script = CreateNewText(script_name)
-            path = os.path.dirname(os.path.abspath(__file__))+"\\"+script_name
+            path = os.path.dirname(os.path.join(os.path.abspath(__file__)),script_name)
             with open(path, "r") as file:
                 script.write(file.read())
     
